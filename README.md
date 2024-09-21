@@ -9,15 +9,24 @@ Our main source is https://github.com/antonblanchard/microwatt  and issues/quest
 ## Getting Started
 
 For background on the OpenPOWER ISA please refer to 
-https://openpowerfoundation.org/
+
+  https://openpowerfoundation.org/
+
 also, this talk may be helpful 
-	https://youtu.be/CnMwCrtz6MA
+
+ https://youtu.be/CnMwCrtz6MA
+
 for an introduction to MicroWatt see
-	https://github.com/antonblanchard/microwatt
+
+ https://github.com/antonblanchard/microwatt
+
 and this talk covers the MicroWatt microarchitecture
-	https://youtu.be/uEAoMCE6IKo
+
+ https://youtu.be/uEAoMCE6IKo
+
 for a walkthrough and some additional background of the instructions on this page see
-	< TO BE ADDED SOON >
+
+ < TO BE ADDED SOON >
 
 ### Dependencies
 
@@ -125,11 +134,12 @@ $ export PATH=$PATH:/home/<user>/.local/bin
 $ cd ~
 $ fusesoc fetch uart16550
 $ fusesoc library add microwatt /path/to/microwatt
+$ fusesoc run --build --target=arty_a7-100 microwatt --no_bram --memory_size=0
 ```
 The output is build/microwatt_0/arty_a7-100-vivado/microwatt_0.bit.
 
 Note: path/to/microwatt is just microwatt if you are in the top directory
-$ fusesoc run --build --target=arty_a7-100 microwatt --no_bram --memory_size=0
+
 
 * Building the Linux kernel
 
@@ -199,12 +209,7 @@ The first command sets the root password (you’ll see some complaints but you c
 
 To Do … adding a MicroSD on one of the Arty Pmod ports so we can have a permanent file system.
 
-## Help
-
-Any advise for common problems or issues.
-```
-command to run if program contains helper info
-```
+## FAQ
 
 ## Version History
 
@@ -222,4 +227,3 @@ Madhavan Srinivasan, Jayakumar Singaram, and H. Peter Hofstee contributed to thi
 ## Acknowledgments
 
 We sincerely appreciate those who built the original projects and tools this github page tries to provide some further assistance with, and of course specifically the creators of and contributors to MicroWatt.
-![image](https://github.com/user-attachments/assets/0e726012-3284-4dbe-b660-4e3bfbfb3502)
