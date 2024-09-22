@@ -110,6 +110,13 @@ $ cd ~
 $ sudo ln -s /usr/bin/python3 /usr/local/bin/python
 $ sudo apt-get install -y python3-pip
 $ pip3 install --user -U fusesoc
+$ export PATH=$PATH:~/.local/bin
+```
+* Build MicroWatt for Arty A7-100T
+
+* You can skip this step when you are in the CDAC environment as getting the Xilinx paths has been added to .bashrc there
+```
+$ source <Xilinx install dir>/Xilinx/Vivado/2024.1/settings64.sh
 ```
 * Build MicroWatt bitfile for Arty A7-100T
 ```
@@ -119,7 +126,7 @@ $ fusesoc run --build --target=arty_a7-100 microwatt --no_bram --memory_size=0
 ```
 The output is build/microwatt_0/arty_a7-100-vivado/microwatt_0.bit.
 
-* Building the Linux kernel
+* Building the Linux kernel -- you can skip this step if you want to run the precompiled image and jump ahead to "Program Arty"
 
 The linux build requires flex and bison
 ```
@@ -142,21 +149,26 @@ The output is output/images/rootfs.cpio.
 
 Next build the Linux kernel
 ```
-$ git clone \ 
-$ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+$ git clone https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 $ cd linux
 $ make ARCH=powerpc microwatt_defconfig
-$ make ARCH=powerpc CROSS_COMPILE=powerpc64le-linux-gnu- \
-CONFIG_INITRAMFS_SOURCE=/buildroot/output/images/rootfs.cpio -j$(nproc)
+$ make ARCH=powerpc CROSS_COMPILE=powerpc64le-linux-gnu- CONFIG_INITRAMFS_SOURCE=/buildroot/output/images/rootfs.cpio -j$(nproc)
 ```
 
 The output is arch/powerpc/boot/dtbImage.microwatt.elf.
+
+* Get the linux buildroot elf file if you did not build it yourself
+```
+$ cd ~
+$ git clone https://github.com/hofstee-hp
+```
 
 * Program Arty with the MicroWatt bitfile and  Linux image
 
 This operation will overwrite the contents of your flash.
 
 ```
+$ cd ~
 $ microwatt/openocd/flash-arty -f a100 build/microwatt_0/arty_a7-100-vivado/microwatt_0.bit
 $ microwatt/openocd/flash-arty -f a100 dtbImage.microwatt.elf -t bin -a 0x400000
 ```
