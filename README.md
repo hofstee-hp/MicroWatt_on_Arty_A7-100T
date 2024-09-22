@@ -108,6 +108,7 @@ $ sudo adduser $USER dialout
 ```
 $ cd ~
 $ sudo ln -s /usr/bin/python3 /usr/local/bin/python
+$ sudo apt-get install -y python3-pip
 $ sudo apt install -y pip3
 $ pip3 install --user -U fusesoc
 $ fusesoc library add microwatt microwatt
