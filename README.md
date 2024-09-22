@@ -123,7 +123,7 @@ $ pip3 install --user -U fusesoc
 $ export PATH=$PATH:~/.local/bin
 ```
 # Build MicroWatt bitfile for Arty A7-100T
-```
+
 You can skip the first step below if you are in the CDAC environment as getting the Xilinx paths has been added to .bashrc there
 ```
 $ source <Xilinx install dir>/Xilinx/Vivado/2024.1/settings64.sh
