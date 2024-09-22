@@ -127,9 +127,11 @@ $ export PATH=$PATH:~/.local/bin
 You can skip the first step below if you are in the CDAC environment as getting the Xilinx paths has been added to .bashrc there
 ```
 $ source <Xilinx install dir>/Xilinx/Vivado/2024.1/settings64.sh
+$ mkdir arty
 $ fusesoc library add microwatt microwatt
 $ fusesoc fetch uart16550
 $ fusesoc run --build --target=arty_a7-100 microwatt --no_bram --memory_size=0
+$ cp build/microwatt_0/arty_a7-100-vivado/microwatt_0.bit ~/arty
 ```
 The last command is the actual build and invokes Vivado. The output is build/microwatt_0/arty_a7-100-vivado/microwatt_0.bit.
 
@@ -159,6 +161,7 @@ $ git clone https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 $ cd linux
 $ make ARCH=powerpc microwatt_defconfig
 $ make ARCH=powerpc CROSS_COMPILE=powerpc64le-linux-gnu- CONFIG_INITRAMFS_SOURCE=/buildroot/output/images/rootfs.cpio -j$(nproc)
+$ cp arch/powerpc/boot/dtbImage.microwatt.elf ~/arty
 ```
 
 The output is arch/powerpc/boot/dtbImage.microwatt.elf.
@@ -167,8 +170,8 @@ The output is arch/powerpc/boot/dtbImage.microwatt.elf.
 
 * Get the linux buildroot elf file if you did not build it yourself, the second "gdown" command allows you to get the bitfile if you did not build it yourself
 ```
-$ cd ~
 $ pip3 install gdown
+$ cd ~/arty
 $ gdown https://drive.google.com/uc?id=1JRmkKseXCFwHaXCmdC5NrvXIwwQXpkey
 $ gdown https://drive.google.com/uc?id=1v7KqhiqnXxnyWRlK-5k4L4S6MJzLmkW3
 ```
@@ -176,8 +179,8 @@ $ gdown https://drive.google.com/uc?id=1v7KqhiqnXxnyWRlK-5k4L4S6MJzLmkW3
 This next operation will overwrite the contents of the flash on the Arty board .
 
 ```
-$ cd ~
-$ microwatt/openocd/flash-arty -f a100 build/microwatt_0/arty_a7-100-vivado/microwatt_0.bit
+$ cd ~/arty
+$ microwatt/openocd/flash-arty -f a100 microwatt_0.bit
 $ microwatt/openocd/flash-arty -f a100 dtbImage.microwatt.elf -t bin -a 0x400000
 ```
 ### See it boot!
