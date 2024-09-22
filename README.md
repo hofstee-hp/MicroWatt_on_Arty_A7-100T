@@ -40,30 +40,28 @@ One reason we use this particular build environment is that all the dependencies
 ```
 $ sudo apt-get update 
 $ sudo apt-get upgrade 
-$ sudo apt-get install build-essential git ghdl-common ghdl ghdl-llvm gnat
-$ sudo apt-get install binutils-powerpc64le* gcc-powerpc64le-* g++-powerpc64le-*
+$ sudo apt-get install -y build-essential git ghdl-common ghdl ghdl-llvm gnat
+$ sudo apt-get install -y binutils-powerpc64le* gcc-powerpc64le-* g++-powerpc64le-*
 ```
-* Next we clone the micropython and microwatt repositories
+
+* Build MicroPython
 ```
 $ cd ~ 
 $ git clone https://github.com/micropython/micropython.git 
-$ git clone https://github.com/antonblanchard/microwatt 
-```
-* Build MicroPython
-```
-$ cd ~/micropython 
-$ cd ports/powerpc 
+$ cd micropython/ports/powerpc 
 $ make 
 ```
 * Build MicroWatt
 ```
-$ cd ~/microwatt 
+$ cd ~ 
+$ git clone https://github.com/antonblanchard/microwatt 
+$ cd microwatt 
 $ make 
 ```
 * Run MicroPython on MicroWatt in the GHDL simulator
 ```
 $ cd ~/microwatt 
-$ ln -s ../micropython/ports/powerpc/build/firmware.bin main_ram.bin 
+$ ln -s ../micropython/firmware.bin main_ram.bin 
 $ ./core_tb > /dev/null
 ```
 * Note: While the above sequence shows microwatt running all the way to a micropython input prompt, actually providing input did not work. Until this is fixed please use the prebuilt ../micropython/firmware.bin instead of ../micropython/ports/powerpc/build/firmware.bin if you want to provide input.
