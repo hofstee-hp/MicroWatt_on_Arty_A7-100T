@@ -106,32 +106,12 @@ $ sudo adduser $USER dialout
 ```
 * Install fusesoc
 ```
------ install fusesoc
 $ cd ~
 $ sudo ln -s /usr/bin/python3 /usr/local/bin/python
-$ sudo apt install pip3
+$ sudo apt install -y pip3
 $ pip3 install --user -U fusesoc
-
------- fusesoc init was not recognized so I had to do create a config file
-$ cat - > ~/.config/fusesoc/fusesoc.conf
-[main]
-cores_root = ~/fuse/fusesoc-cores
-cache_root = ~/fuse/fuse-cache
-build_root = ~/fuse/fuse-builds
-<ctrl-D>
-$ mkdir ~/fuse
-$ mkdir ~/fuse/fusesoc-cores
-$ mkdir ~/fuse/fuse-cache
-$ mkdir ~/fuse/fuse-builds
-
-$ export PATH=$PATH:/home/<user>/.local/bin
-```
-* Building the bitfile for MicroWatt
-
-```
-$ cd ~
+$ fusesoc library add microwatt microwatt
 $ fusesoc fetch uart16550
-$ fusesoc library add microwatt /path/to/microwatt
 $ fusesoc run --build --target=arty_a7-100 microwatt --no_bram --memory_size=0
 ```
 The output is build/microwatt_0/arty_a7-100-vivado/microwatt_0.bit.
