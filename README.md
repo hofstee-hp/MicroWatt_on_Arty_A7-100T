@@ -180,8 +180,8 @@ This next operation will overwrite the contents of the flash on the Arty board .
 
 ```
 $ cd ~/arty
-$ microwatt/openocd/flash-arty -f a100 microwatt_0.bit
-$ microwatt/openocd/flash-arty -f a100 dtbImage.microwatt.elf -t bin -a 0x400000
+$ ~/microwatt/openocd/flash-arty -f a100 microwatt_0.bit
+$ ~/microwatt/openocd/flash-arty -f a100 dtbImage.microwatt.elf -t bin -a 0x400000
 ```
 ### See it boot!
 
