@@ -61,7 +61,7 @@ $ make
 * Run MicroPython on MicroWatt in the GHDL simulator
 ```
 $ cd ~/microwatt 
-$ ln -s ../micropython/firmware.bin main_ram.bin 
+$ ln -s micropython/firmware.bin main_ram.bin 
 $ ./core_tb > /dev/null
 ```
 * Note: While the above sequence shows microwatt running all the way to a micropython input prompt, actually providing input did not work. Until this is fixed please use the prebuilt ../micropython/firmware.bin instead of ../micropython/ports/powerpc/build/firmware.bin if you want to provide input.
