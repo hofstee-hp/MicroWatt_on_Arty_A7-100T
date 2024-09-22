@@ -66,23 +66,29 @@ $ ./core_tb > /dev/null
 ```
 * Note: While the above sequence shows microwatt running all the way to a micropython input prompt, actually providing input did not work. Until this is fixed please use the prebuilt ../micropython/firmware.bin instead of ../micropython/ports/powerpc/build/firmware.bin if you want to provide input.
 
-### Running Linux on the Arty A7-100T
+### Install Vivado 2024.1
 
-* Install Vivado 24.1 (skip this step if you are running in the CDAC build environment as your VM will have Vivado pre-installed)
-```
+* Install Vivado 2024.1 (skip this step if you are running in the CDAC build environment as your VM will have Vivado pre-installed)
+
 ----- Vivado and installer dependencies
+```
 $ sudo apt update
 $ sudo apt-get install -y python3-pip 
 $ sudo apt-get install -y libncurses5
 $ sudo apt-get install -y libtinfo5
-
+```
 ------ download and build Vivado 24.1 
+
 https://www.xilinx.com/support/download.html?_ga=2.241968386.128795933.1725229893-181584843.1724769065
+
 https://docs.amd.com/r/en-US/ug973-vivado-release-notes-install-license/Download-and-Installation
+
 ------ We recommend the web installer version 291.7MB initial download
+
 ------ Single file download is 107GB (sic)
 
 ---- Install the digilent board packages
+```
 $ cd
 $ git clone https://github.com/Digilent/vivado-boards.git
 $ cd <Xilinx install dir>/Xilinx/Vivado/2024.1/data/boards
@@ -90,12 +96,14 @@ $ mkdir board_files
 $ cp /home/$USER/vivado-boards/board_files/* board_files
 $ cd <Xilinx install dir>/Xilinx/Vivado/2024.1/scripts/board
 $ cp /home/$USER/vivado-boards/utility/Vivado_init.tcl .
-
+```
 ------ Update paths
+```
 $ cd <Xilinx install dir>/Xilinx/Vivado/2024.1
 $ source settings64.sh
-
+```
 ----- If you are installing on a system that has the board attached
+```
 $ sudo apt-get install -y openocd
 $ sudo apt-get install -y putty
 $ sudo apt-get install -y gtkterm
@@ -112,7 +120,7 @@ $ sudo apt-get install -y python3-pip
 $ pip3 install --user -U fusesoc
 $ export PATH=$PATH:~/.local/bin
 ```
-* Build MicroWatt for Arty A7-100T
+### Build MicroWatt bitfile for Arty A7-100T
 
 * You can skip this step when you are in the CDAC environment as getting the Xilinx paths has been added to .bashrc there
 ```
@@ -126,7 +134,7 @@ $ fusesoc run --build --target=arty_a7-100 microwatt --no_bram --memory_size=0
 ```
 The output is build/microwatt_0/arty_a7-100-vivado/microwatt_0.bit.
 
-* Building the Linux kernel -- you can skip this step if you want to run the precompiled image and jump ahead to "Program Arty"
+### Building the Linux kernel -- you can skip this step if you want to run the precompiled image and jump ahead to "Program Arty"
 
 The linux build requires flex and bison
 ```
@@ -165,7 +173,7 @@ $ gdown https://drive.google.com/uc?id=1JRmkKseXCFwHaXCmdC5NrvXIwwQXpkey
 $ gdown https://drive.google.com/uc?id=1v7KqhiqnXxnyWRlK-5k4L4S6MJzLmkW3
 ```
 
-* Program Arty with the MicroWatt bitfile and  Linux image
+### Program Arty with the MicroWatt bitfile and  Linux image
 
 This operation will overwrite the contents of your flash.
 
