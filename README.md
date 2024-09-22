@@ -96,9 +96,9 @@ $ cd <Xilinx install dir>/Xilinx/Vivado/2024.1
 $ source settings64.sh
 
 ----- If you are installing on a system that has the board attached
-$ sudo apt-get install openocd
-$ sudo apt-get install putty
-$ sudo apt-get install gtkterm
+$ sudo apt-get install -y openocd
+$ sudo apt-get install -y putty
+$ sudo apt-get install -y gtkterm
 $ cd <Xilinx install dir>/Xilinx/Vivado/2024.1/data/xicom/cable_drivers/
 $ cd lin64/install_scripts/install_drivers
 $ ./install_drivers 
@@ -116,15 +116,12 @@ $ fusesoc run --build --target=arty_a7-100 microwatt --no_bram --memory_size=0
 ```
 The output is build/microwatt_0/arty_a7-100-vivado/microwatt_0.bit.
 
-Note: path/to/microwatt is just microwatt if you are in the top directory
-
-
 * Building the Linux kernel
 
 The linux build requires flex and bison
 ```
-$ sudo apt-get install flex
-$ sudo apt-get install bison
+$ sudo apt-get install -y flex
+$ sudo apt-get install -y bison
 ```
 
 Use buildroot to create a userspace.
