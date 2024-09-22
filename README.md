@@ -112,9 +112,9 @@ $ cd lin64/install_scripts/install_drivers
 $ ./install_drivers 
 $ sudo adduser $USER dialout
 ```
-### Build MicroWatt bitfile for Arty A7-100T
+### Build MicroWatt bitfile for Arty A7-100T -- there are also instructions further down on how to download the bitfile if you do not want to build
 
-* Install fusesoc
+# Install fusesoc
 ```
 $ cd ~
 $ sudo ln -s /usr/bin/python3 /usr/local/bin/python
@@ -122,17 +122,16 @@ $ sudo apt-get install -y python3-pip
 $ pip3 install --user -U fusesoc
 $ export PATH=$PATH:~/.local/bin
 ```
-You can skip this next step when you are in the CDAC environment as getting the Xilinx paths has been added to .bashrc there
+# Build MicroWatt bitfile for Arty A7-100T
+```
+You can skip the first step below if you are in the CDAC environment as getting the Xilinx paths has been added to .bashrc there
 ```
 $ source <Xilinx install dir>/Xilinx/Vivado/2024.1/settings64.sh
-```
-* Build MicroWatt bitfile for Arty A7-100T
-```
 $ fusesoc library add microwatt microwatt
 $ fusesoc fetch uart16550
 $ fusesoc run --build --target=arty_a7-100 microwatt --no_bram --memory_size=0
 ```
-The output is build/microwatt_0/arty_a7-100-vivado/microwatt_0.bit.
+The last command is the actual build and invokes Vivado. The output is build/microwatt_0/arty_a7-100-vivado/microwatt_0.bit.
 
 ### Building the Linux kernel -- you can skip this step if you want to run the precompiled buildroot elf image and jump ahead to "Program Arty"
 
@@ -164,7 +163,9 @@ $ make ARCH=powerpc CROSS_COMPILE=powerpc64le-linux-gnu- CONFIG_INITRAMFS_SOURCE
 
 The output is arch/powerpc/boot/dtbImage.microwatt.elf.
 
-* Get the linux buildroot elf file if you did not build it yourself, the second "gdown" command gets the bitfile
+### Program Arty with the MicroWatt bitfile and  Linux image
+
+* Get the linux buildroot elf file if you did not build it yourself, the second "gdown" command allows you to get the bitfile if you did not build it yourself
 ```
 $ cd ~
 $ pip3 install gdown
@@ -172,9 +173,7 @@ $ gdown https://drive.google.com/uc?id=1JRmkKseXCFwHaXCmdC5NrvXIwwQXpkey
 $ gdown https://drive.google.com/uc?id=1v7KqhiqnXxnyWRlK-5k4L4S6MJzLmkW3
 ```
 
-### Program Arty with the MicroWatt bitfile and  Linux image
-
-This operation will overwrite the contents of your flash.
+This next operation will overwrite the contents of the flash on the Arty board .
 
 ```
 $ cd ~
