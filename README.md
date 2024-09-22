@@ -114,6 +114,12 @@ $ sudo adduser $USER dialout
 ```
 ## Build MicroWatt bitfile for Arty A7-100T -- there are also instructions further down on how to download the bitfile if you do not want to build
 
+You can skip the first step below if you are in the CDAC environment as getting the Xilinx paths has been added to .bashrc there
+```
+$ source <Xilinx install dir>/Xilinx/Vivado/2024.1/settings64.sh
+$ mkdir arty
+```
+
 ### Install fusesoc
 ```
 $ cd ~
@@ -124,10 +130,7 @@ $ export PATH=$PATH:~/.local/bin
 ```
 ### Build MicroWatt bitfile for Arty A7-100T
 
-You can skip the first step below if you are in the CDAC environment as getting the Xilinx paths has been added to .bashrc there
 ```
-$ source <Xilinx install dir>/Xilinx/Vivado/2024.1/settings64.sh
-$ mkdir arty
 $ fusesoc library add microwatt microwatt
 $ fusesoc fetch uart16550
 $ fusesoc run --build --target=arty_a7-100 microwatt --no_bram --memory_size=0
