@@ -195,10 +195,13 @@ If you want to use Arty in an edge type environment, you will likely want to ena
 ```
 In your gtkterm terminal after the system boots you should see
 
+```
+...
 Welcome to Buildroot
 microwatt login: ( enter “root” – without quotes )
 # passwd root
 # udhcpc -i eth0
+```
 
 ```
 The first command sets the root password (you’ll see some complaints but you can ignore those for now) and the second starts the network. In the output from Arty you’ll see “udhcpc: lease of x.y.z.u obtained from …”. x.y.z.u is the Ethernet address you can use to ssh to Arty ( ssh root@x.y.z.u ) from another system on the network. If you reset your Arty system multiple times then on the system you use to connect to it you may end up with non-matching keys in ~/.ssh/known_hosts on the machine from which you are trying to connect to your Arty Microwatt system. If this happens manually remove the entry in that file for x.y.z.u
