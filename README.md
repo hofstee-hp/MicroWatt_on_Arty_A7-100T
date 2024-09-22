@@ -188,11 +188,10 @@ $ gtkterm -p /dev/ttyUSB1
 
 The gateware has firmware that will look at FLASH_ADDRESS and attempt to parse an ELF there, loading it to the address specified in the ELF header and jumping to it. You may have to push the “program” button if you don’t see it starting automatically.
 
-## Enable SSH on the Arty
+# Enable SSH on the Arty
 
 If you want to use Arty in an edge type environment, you will likely want to enable remote access over the Ethernet. To do this you’ll need to connect your Arty to an Ethernet router.
 
-```
 In your gtkterm terminal after the system boots you should see
 
 ```
@@ -204,7 +203,7 @@ microwatt login: ( enter “root” – without quotes )
 ```
 The first command sets the root password (you’ll see some complaints but you can ignore those for now) and the second starts the network. In the output from Arty you’ll see “udhcpc: lease of x.y.z.u obtained from …”. x.y.z.u is the Ethernet address you can use to ssh to Arty ( ssh root@x.y.z.u ) from another system on the network. If you reset your Arty system multiple times then on the system you use to connect to it you may end up with non-matching keys in ~/.ssh/known_hosts on the machine from which you are trying to connect to your Arty Microwatt system. If this happens manually remove the entry in that file for x.y.z.u
 
-## Setting up a file system
+# Setting up a file system
 
 To Do … adding a MicroSD on one of the Arty Pmod ports so we can have a permanent file system.
 
