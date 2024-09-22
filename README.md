@@ -30,7 +30,7 @@ for a walkthrough and some additional background of the instructions on this pag
 
 ### Dependencies
 
-* We assume Ubuntu 22.04.4 (running on a 64b x86 system) as the starting point, and we will use the free version of Vivado 2024.1 (which is pre-installed if you are using the CDAC development environment). In this repository we will not respond to issues if you have a different build environment.
+* We assume Ubuntu 22.04.4 (running on a x86-64 system) as the starting point, and we will use the free version of Vivado 2024.1 (which is pre-installed if you are using the CDAC development environment). In this repository we will not respond to issues if you have a different build environment.
 
 ### Simulating MicroWatt with GHDL and running MicroPython
 
