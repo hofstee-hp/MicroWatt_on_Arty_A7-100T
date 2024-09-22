@@ -111,6 +111,9 @@ $ sudo ln -s /usr/bin/python3 /usr/local/bin/python
 $ sudo apt-get install -y python3-pip
 $ sudo apt install -y pip3
 $ pip3 install --user -U fusesoc
+```
+* Build MicroWatt bitfile for Arty A7-100T
+```
 $ fusesoc library add microwatt microwatt
 $ fusesoc fetch uart16550
 $ fusesoc run --build --target=arty_a7-100 microwatt --no_bram --memory_size=0
