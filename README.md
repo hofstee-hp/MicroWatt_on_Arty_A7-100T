@@ -157,10 +157,12 @@ $ make ARCH=powerpc CROSS_COMPILE=powerpc64le-linux-gnu- CONFIG_INITRAMFS_SOURCE
 
 The output is arch/powerpc/boot/dtbImage.microwatt.elf.
 
-* Get the linux buildroot elf file if you did not build it yourself
+* Get the linux buildroot elf file if you did not build it yourself, the second "gdown" command gets the bitfile
 ```
 $ cd ~
-$ git clone https://github.com/hofstee-hp
+$ pip3 install gdown
+$ gdown https://drive.google.com/uc?id=1JRmkKseXCFwHaXCmdC5NrvXIwwQXpkey
+$ gdown https://drive.google.com/uc?id=1v7KqhiqnXxnyWRlK-5k4L4S6MJzLmkW3
 ```
 
 * Program Arty with the MicroWatt bitfile and  Linux image
