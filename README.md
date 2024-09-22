@@ -112,6 +112,8 @@ $ cd lin64/install_scripts/install_drivers
 $ ./install_drivers 
 $ sudo adduser $USER dialout
 ```
+### Build MicroWatt bitfile for Arty A7-100T
+
 * Install fusesoc
 ```
 $ cd ~
@@ -120,9 +122,7 @@ $ sudo apt-get install -y python3-pip
 $ pip3 install --user -U fusesoc
 $ export PATH=$PATH:~/.local/bin
 ```
-### Build MicroWatt bitfile for Arty A7-100T
-
-* You can skip this step when you are in the CDAC environment as getting the Xilinx paths has been added to .bashrc there
+You can skip this next step when you are in the CDAC environment as getting the Xilinx paths has been added to .bashrc there
 ```
 $ source <Xilinx install dir>/Xilinx/Vivado/2024.1/settings64.sh
 ```
@@ -134,17 +134,16 @@ $ fusesoc run --build --target=arty_a7-100 microwatt --no_bram --memory_size=0
 ```
 The output is build/microwatt_0/arty_a7-100-vivado/microwatt_0.bit.
 
-### Building the Linux kernel -- you can skip this step if you want to run the precompiled image and jump ahead to "Program Arty"
+### Building the Linux kernel -- you can skip this step if you want to run the precompiled buildroot elf image and jump ahead to "Program Arty"
 
 The linux build requires flex and bison
 ```
 $ sudo apt-get install -y flex
 $ sudo apt-get install -y bison
 ```
-
 Use buildroot to create a userspace.
 
-A small change is required to glibc in order to support the VMX/AltiVec-less Microwatt, as float128 support is mandatory and for this in GCC requires VSX/AltiVec. This change is included in Joel's buildroot fork, along with a defconfig:
+A small change is required to glibc in order to support the VMX/AltiVec-less Microwatt, as float128 support is mandatory and for this in GCC requires VSX/AltiVec. This change is included in a buildroot fork, along with a defconfig:
 
 ```
 $ cd ~
