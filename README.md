@@ -66,7 +66,7 @@ $ ./core_tb > /dev/null
 ```
 * Note: While the above sequence shows microwatt running all the way to a micropython input prompt, actually providing input did not work. Until this is fixed please use the prebuilt ../micropython/firmware.bin instead of ../micropython/ports/powerpc/build/firmware.bin if you want to provide input.
 
-### Install Vivado 2024.1
+## Install Vivado 2024.1
 
 * Install Vivado 2024.1 (skip this step if you are running in the CDAC build environment as your VM will have Vivado pre-installed)
 
@@ -112,9 +112,9 @@ $ cd lin64/install_scripts/install_drivers
 $ ./install_drivers 
 $ sudo adduser $USER dialout
 ```
-### Build MicroWatt bitfile for Arty A7-100T -- there are also instructions further down on how to download the bitfile if you do not want to build
+## Build MicroWatt bitfile for Arty A7-100T -- there are also instructions further down on how to download the bitfile if you do not want to build
 
-# Install fusesoc
+### Install fusesoc
 ```
 $ cd ~
 $ sudo ln -s /usr/bin/python3 /usr/local/bin/python
@@ -122,7 +122,7 @@ $ sudo apt-get install -y python3-pip
 $ pip3 install --user -U fusesoc
 $ export PATH=$PATH:~/.local/bin
 ```
-# Build MicroWatt bitfile for Arty A7-100T
+### Build MicroWatt bitfile for Arty A7-100T
 
 You can skip the first step below if you are in the CDAC environment as getting the Xilinx paths has been added to .bashrc there
 ```
@@ -133,7 +133,7 @@ $ fusesoc run --build --target=arty_a7-100 microwatt --no_bram --memory_size=0
 ```
 The last command is the actual build and invokes Vivado. The output is build/microwatt_0/arty_a7-100-vivado/microwatt_0.bit.
 
-### Building the Linux kernel -- you can skip this step if you want to run the precompiled buildroot elf image and jump ahead to "Program Arty"
+## Building the Linux kernel -- you can skip this step if you want to run the precompiled buildroot elf image and jump ahead to "Program Arty"
 
 The linux build requires flex and bison
 ```
@@ -163,7 +163,7 @@ $ make ARCH=powerpc CROSS_COMPILE=powerpc64le-linux-gnu- CONFIG_INITRAMFS_SOURCE
 
 The output is arch/powerpc/boot/dtbImage.microwatt.elf.
 
-### Program Arty with the MicroWatt bitfile and  Linux image
+## Program Arty with the MicroWatt bitfile and  Linux image
 
 * Get the linux buildroot elf file if you did not build it yourself, the second "gdown" command allows you to get the bitfile if you did not build it yourself
 ```
@@ -180,6 +180,7 @@ $ cd ~
 $ microwatt/openocd/flash-arty -f a100 build/microwatt_0/arty_a7-100-vivado/microwatt_0.bit
 $ microwatt/openocd/flash-arty -f a100 dtbImage.microwatt.elf -t bin -a 0x400000
 ```
+### See it boot!
 
 Connect to the second USB TTY device exposed by the FPGA
 ```
@@ -188,7 +189,7 @@ $ gtkterm -p /dev/ttyUSB1
 
 The gateware has firmware that will look at FLASH_ADDRESS and attempt to parse an ELF there, loading it to the address specified in the ELF header and jumping to it. You may have to push the “program” button if you don’t see it starting automatically.
 
-# Enable SSH on the Arty
+### Log in and enable SSH on the Arty
 
 If you want to use Arty in an edge type environment, you will likely want to enable remote access over the Ethernet. To do this you’ll need to connect your Arty to an Ethernet router.
 
@@ -203,7 +204,7 @@ microwatt login: ( enter “root” – without quotes )
 ```
 The first command sets the root password (you’ll see some complaints but you can ignore those for now) and the second starts the network. In the output from Arty you’ll see “udhcpc: lease of x.y.z.u obtained from …”. x.y.z.u is the Ethernet address you can use to ssh to Arty ( ssh root@x.y.z.u ) from another system on the network. If you reset your Arty system multiple times then on the system you use to connect to it you may end up with non-matching keys in ~/.ssh/known_hosts on the machine from which you are trying to connect to your Arty Microwatt system. If this happens manually remove the entry in that file for x.y.z.u
 
-# Setting up a file system
+### Setting up a file system
 
 To Do … adding a MicroSD on one of the Arty Pmod ports so we can have a permanent file system.
 
