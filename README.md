@@ -69,14 +69,15 @@ $ ./core_tb > /dev/null
 
 ## Install Vivado 2024.1 - in the CDAC environment Vivado is pre-installed.
 
------ Vivado and installer dependencies
+### Vivado and installer dependencies
+Note: this assumes "build-essential" is already installed (see above).
 ```
 $ sudo apt update
 $ sudo apt-get install -y python3-pip 
 $ sudo apt-get install -y libncurses5
 $ sudo apt-get install -y libtinfo5
 ```
------- download and build Vivado 2024.1 
+### Download and build Vivado 2024.1 
 
 https://www.xilinx.com/support/download.html?_ga=2.241968386.128795933.1725229893-181584843.1724769065
 
