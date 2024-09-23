@@ -227,7 +227,7 @@ The instructions on this page are free to use for any purpose, including commerc
 
 ## Authors
 
-Madhavan Srinivasan, Jayakumar Singaram, and H. Peter Hofstee contributed to this list of instructions.
+Madhavan Srinivasan, Jayakumar Singaram, Pranose Edavoor, and Peter Hofstee contributed to this list of instructions (adapted from github.com/antonblanchard/microwatt for the specific build environment).
 
 ## Acknowledgments
 
