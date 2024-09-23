@@ -30,11 +30,12 @@ for a walkthrough and some additional background of the instructions on this pag
 
 ### Dependencies
 
-* We assume Ubuntu 22.04.4 (running on a x86-64 system) as the starting point, and we will use the free version of Vivado 2024.1 (which is pre-installed if you are using the CDAC development environment). In this repository we will not respond to issues if you have a different build environment.
+* We assume Ubuntu 22.04.4 (running on a x86-64 system) as the starting point, and we will use the free version of Vivado 2024.1 (Which is pre-installed if you are using the CDAC development environment). In this repository we will not respond to issues if you have a different build environment.
 
-### Simulating MicroWatt with GHDL and running MicroPython
+## Simulating MicroWatt with GHDL and running MicroPython
 
-* Installing some dependencies.
+### Installing some dependencies - in the CDAC environment these are pre-installed.
+
 One reason we use this particular build environment is that all the dependencies we have for this first step are easy to resolve. The commands below install basic build tools, the git utility so we can access the git repositories, the ghdl VHDL simulator, the gnat ADA compiler (ghdl has an ADA dependency), and the ppc64le (64b powerpc little endian) cross compilers so we can build code for our OpenPOWER ISA processor in an x86-based build environment.
 
 ```
@@ -44,21 +45,21 @@ $ sudo apt-get install -y build-essential git ghdl-common ghdl ghdl-llvm gnat
 $ sudo apt-get install -y binutils-powerpc64le* gcc-powerpc64le-* g++-powerpc64le-*
 ```
 
-* Build MicroPython
+### Build MicroPython
 ```
 $ cd ~ 
 $ git clone https://github.com/micropython/micropython.git 
 $ cd micropython/ports/powerpc 
 $ make 
 ```
-* Build MicroWatt
+### Build MicroWatt
 ```
 $ cd ~ 
 $ git clone https://github.com/antonblanchard/microwatt 
 $ cd microwatt 
 $ make 
 ```
-* Run MicroPython on MicroWatt in the GHDL simulator
+### Run MicroPython on MicroWatt in the GHDL simulator
 ```
 $ cd ~/microwatt 
 $ ln -s micropython/firmware.bin main_ram.bin 
@@ -66,9 +67,7 @@ $ ./core_tb > /dev/null
 ```
 * Note: While the above sequence shows microwatt running all the way to a micropython input prompt, actually providing input did not work. Until this is fixed please use the prebuilt ../micropython/firmware.bin instead of ../micropython/ports/powerpc/build/firmware.bin if you want to provide input.
 
-## Install Vivado 2024.1
-
-* Install Vivado 2024.1 (skip this step if you are running in the CDAC build environment as your VM will have Vivado pre-installed)
+## Install Vivado 2024.1 - in the CDAC environment Vivado is pre-installed.
 
 ----- Vivado and installer dependencies
 ```
@@ -120,7 +119,7 @@ $ source <Xilinx install dir>/Xilinx/Vivado/2024.1/settings64.sh
 $ mkdir arty
 ```
 
-### Install fusesoc
+## Install fusesoc - fusesoc is pre-installed in the CDAC environment so there you can skip this
 ```
 $ cd ~
 $ sudo ln -s /usr/bin/python3 /usr/local/bin/python
@@ -128,7 +127,7 @@ $ sudo apt-get install -y python3-pip
 $ pip3 install --user -U fusesoc
 $ export PATH=$PATH:~/.local/bin
 ```
-### Build MicroWatt bitfile for Arty A7-100T
+## Build MicroWatt bitfile for Arty A7-100T
 
 ```
 $ fusesoc library add microwatt microwatt
@@ -140,7 +139,7 @@ The last command is the actual build and invokes Vivado. The output is build/mic
 
 ## Building the Linux kernel -- you can skip this step if you want to run the precompiled buildroot elf image and jump ahead to "Program Arty"
 
-The linux build requires flex and bison
+### The linux build requires flex and bison - pre-installed if you are using the CDAC environment
 ```
 $ sudo apt-get install -y flex
 $ sudo apt-get install -y bison
@@ -149,6 +148,7 @@ Use buildroot to create a userspace.
 
 A small change is required to glibc in order to support the VMX/AltiVec-less Microwatt, as float128 support is mandatory and for this in GCC requires VSX/AltiVec. This change is included in a buildroot fork, along with a defconfig:
 
+### Build buildroot
 ```
 $ cd ~
 $ git clone -b microwatt https://github.com/shenki/buildroot
@@ -158,7 +158,7 @@ $ make
 ```
 The output is output/images/rootfs.cpio.
 
-Next build the Linux kernel
+### Next build the Linux kernel
 ```
 $ git clone https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 $ cd linux
