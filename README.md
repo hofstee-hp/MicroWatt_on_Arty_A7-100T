@@ -30,7 +30,7 @@ for a walkthrough and some additional background of the instructions on this pag
 
 ### Dependencies
 
-* We assume Ubuntu 22.04.4 (running on a x86-64 system) as the starting point, and we will use the free version of Vivado 2024.1 (Which is pre-installed if you are using the CDAC development environment). In this repository we will not respond to issues if you have a different build environment.
+We assume Ubuntu 22.04.4 (running on a x86-64 system) as the starting point, and we will use the free version of Vivado 2024.1 (Which is pre-installed if you are using the CDAC development environment). In this repository we will not respond to issues if you have a different build environment.
 
 ## Simulating MicroWatt with GHDL and running MicroPython
 
@@ -76,17 +76,15 @@ $ sudo apt-get install -y python3-pip
 $ sudo apt-get install -y libncurses5
 $ sudo apt-get install -y libtinfo5
 ```
------- download and build Vivado 24.1 
+------ download and build Vivado 2024.1 
 
 https://www.xilinx.com/support/download.html?_ga=2.241968386.128795933.1725229893-181584843.1724769065
 
 https://docs.amd.com/r/en-US/ug973-vivado-release-notes-install-license/Download-and-Installation
 
------- We recommend the web installer version 291.7MB initial download
+We recommend the web installer version 291.7MB initial download since the ingle file download for Vivado 2024.1 is 107GB (sic)
 
------- Single file download is 107GB (sic)
-
----- Install the digilent board packages
+Install the digilent board packages:
 ```
 $ cd
 $ git clone https://github.com/Digilent/vivado-boards.git
@@ -96,27 +94,13 @@ $ cp /home/$USER/vivado-boards/board_files/* board_files
 $ cd <Xilinx install dir>/Xilinx/Vivado/2024.1/scripts/board
 $ cp /home/$USER/vivado-boards/utility/Vivado_init.tcl .
 ```
------- Update paths
-```
-$ cd <Xilinx install dir>/Xilinx/Vivado/2024.1
-$ source settings64.sh
-```
------ If you are installing on a system that has the board attached
-```
-$ sudo apt-get install -y openocd
-$ sudo apt-get install -y putty
-$ sudo apt-get install -y gtkterm
-$ cd <Xilinx install dir>/Xilinx/Vivado/2024.1/data/xicom/cable_drivers/
-$ cd lin64/install_scripts/install_drivers
-$ ./install_drivers 
-$ sudo adduser $USER dialout
-```
+
 ## Build MicroWatt bitfile for Arty A7-100T -- there are also instructions further down on how to download the bitfile if you do not want to build
 
 You can skip the first step below if you are in the CDAC environment as getting the Xilinx paths has been added to .bashrc there
 ```
 $ source <Xilinx install dir>/Xilinx/Vivado/2024.1/settings64.sh
-$ mkdir arty
+$ mkdir ~/arty
 ```
 
 ## Install fusesoc - fusesoc is pre-installed in the CDAC environment so there you can skip this
@@ -133,9 +117,11 @@ $ export PATH=$PATH:~/.local/bin
 $ fusesoc library add microwatt microwatt
 $ fusesoc fetch uart16550
 $ fusesoc run --build --target=arty_a7-100 microwatt --no_bram --memory_size=0
+```
+The last command is the actual build and invokes Vivado. The output is build/microwatt_0/arty_a7-100-vivado/microwatt_0.bit. Copy it to the arty directory:
+```
 $ cp build/microwatt_0/arty_a7-100-vivado/microwatt_0.bit ~/arty
 ```
-The last command is the actual build and invokes Vivado. The output is build/microwatt_0/arty_a7-100-vivado/microwatt_0.bit.
 
 ## Building the Linux kernel -- you can skip this step if you want to run the precompiled buildroot elf image and jump ahead to "Program Arty"
 
@@ -164,21 +150,37 @@ $ git clone https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 $ cd linux
 $ make ARCH=powerpc microwatt_defconfig
 $ make ARCH=powerpc CROSS_COMPILE=powerpc64le-linux-gnu- CONFIG_INITRAMFS_SOURCE=/buildroot/output/images/rootfs.cpio -j$(nproc)
+```
+The output is arch/powerpc/boot/dtbImage.microwatt.elf. Copy it to the arty directory:
+```
 $ cp arch/powerpc/boot/dtbImage.microwatt.elf ~/arty
 ```
-
-The output is arch/powerpc/boot/dtbImage.microwatt.elf.
-
 ## Program Arty with the MicroWatt bitfile and  Linux image
 
-* Get the linux buildroot elf file if you did not build it yourself, the second "gdown" command allows you to get the bitfile if you did not build it yourself
+Get the linux buildroot elf file if you did not build it yourself, the second "gdown" command allows you to get the bitfile if you did not build it yourself
 ```
 $ pip3 install gdown
 $ cd ~/arty
 $ gdown https://drive.google.com/uc?id=1JRmkKseXCFwHaXCmdC5NrvXIwwQXpkey
 $ gdown https://drive.google.com/uc?id=1v7KqhiqnXxnyWRlK-5k4L4S6MJzLmkW3
 ```
+### Dependencies
 
+Update paths:
+```
+$ source <Xilinx install dir>/Xilinx/Vivado/2024.1/settings64.sh
+```
+If you are installing on a system that has the board attached you'll need
+```
+$ sudo apt-get install -y openocd
+$ sudo apt-get install -y putty
+$ sudo apt-get install -y gtkterm
+$ cd <Xilinx install dir>/Xilinx/Vivado/2024.1/data/xicom/cable_drivers/
+$ cd lin64/install_scripts/install_drivers
+$ ./install_drivers 
+$ sudo adduser $USER dialout
+```
+### Program the flash
 This next operation will overwrite the contents of the flash on the Arty board .
 
 ```
