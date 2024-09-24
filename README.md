@@ -221,8 +221,8 @@ To Do … adding a MicroSD on one of the Arty Pmod ports so we can have a perman
 
 ## Version History
 
-* 0.0 – Sep 21 2024
-    * Initial Version
+* 0.0 – Sep 21 2024 - Initial Version
+* 0.1 - Sep 24 2024 - First Release
 
 ## License
 
