@@ -177,8 +177,8 @@ $ sudo apt-get install -y openocd
 $ sudo apt-get install -y putty
 $ sudo apt-get install -y gtkterm
 $ cd <Xilinx install dir>/Xilinx/Vivado/2024.1/data/xicom/cable_drivers/
-$ cd lin64/install_scripts/install_drivers
-$ ./install_drivers 
+$ cd lin64/install_script/install_drivers
+$ sudo ./install_drivers 
 $ sudo adduser $USER dialout
 ```
 ### Program the flash
