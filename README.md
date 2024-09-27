@@ -189,6 +189,8 @@ $ cd ~/arty
 $ ~/microwatt/openocd/flash-arty -f a100 microwatt_0.bit
 $ ~/microwatt/openocd/flash-arty -f a100 dtbImage.microwatt.elf -t bin -a 0x400000
 ```
+Note: In some cases openocd ends with an error message, however, it appears programming is still succefful (go to the next step to check if in doubt).
+
 ### See it boot!
 
 Connect to the second USB TTY device exposed by the FPGA
