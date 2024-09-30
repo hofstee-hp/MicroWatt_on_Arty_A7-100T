@@ -26,7 +26,7 @@ and this talk covers the MicroWatt microarchitecture
 
 for a walkthrough and some additional background of the instructions on this page see
 
- < TO BE ADDED SOON >
+ https://www.youtube.com/watch?v=n8Q6G38z2iU
 
 ### Dependencies
 
