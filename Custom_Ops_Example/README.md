@@ -12,20 +12,20 @@ First a few words on custom instructions. Custom instructions are a double-edged
 For our example we decided to add instructions with three source registers and a (distinct) destination register. We chose the opcodes to be similar to integer multiply-add instructions that also have three sources and a distinct destination. However, the instructions we implemented in this example only use one or two source operands. The reason we decided to do this is to make our example useful to people who might want to add very powerful instructions that get a lot done in a single operation, and we wanted to make this example easy to adapt.
 
 The instructions we used as our example are:
-...
+```
   maddhd    4, RT, RA, RB, RC, 48  - i.e. primary 6b opcode = 4, four 5-bit integer register indentifiers, and 48 for the secondary opcode
   maddhdu   4, RT, RA, RB, RC, 49
   maddld    4, RT, RA, RB, RC, 51
-...
+```
   The new instructions we define are:
-...
+```
   addbusat   22, RT, RA, RB, RC, 48  - add bytes unsigned saturating, RC is ignored
   subbusat   22, RT, RA, RB, RC, 49  - subtract bytes unsigned saturating, RC is ignored ( byte-wise subtract RB from RA )
   maskbu     22, RT, RA, RB, RC, 50  - for each byte 0x00 -> 0x00 others -> 0xFF
   gbbd       22, RT, RA, RB, RC, 51  - transpose RA, where RA is considered an 8x8 array of bits
-...
+```
   We define a new execution unit (custom_unit.vhdl) that will handle these custom instructions:
-...
+```
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -96,11 +96,11 @@ begin
         end case;
     end process;
 end behaviour;
-...
+```
 
 We modify the Makefile to include this unit in the build process:
 
-...
+```
 root@localhost:~/microwatt# diff Makefile Makefile.old
 70d69
 < # begin modified for custom unit: added custom_unit.vhdl
@@ -110,11 +110,11 @@ root@localhost:~/microwatt# diff Makefile Makefile.old
 > 	cr_file.vhdl crhelpers.vhdl ppc_fx_insns.vhdl rotator.vhdl \
 79d77
 < # end modified for custom unit
-...
-> 
+>
+```
 decode_types.vhdl is updated to add the new instructions and opcode group
 
-...
+```
 root@localhost:~/microwatt# diff decode_types.vhdl decode_types.vhdl.old
 5,6c5
 < -- begin modified for custom instructions: added OP_CUSTOM
@@ -148,10 +148,10 @@ root@localhost:~/microwatt# diff decode_types.vhdl decode_types.vhdl.old
 < 	    when INSN_custom_maskbu   => return "010110";
 < 	    when INSN_custom_gbbd     => return "010110";
 < -- end added custom opcodes
-...
+```
 
 predecode.vhdl adds support for the new instructions as well
-...
+```
 root@localhost:~/microwatt# diff predecode.vhdl predecode.vhdl.old
 113,120c113
 < -- begin added custom opcodes
@@ -168,9 +168,9 @@ root@localhost:~/microwatt# diff predecode.vhdl predecode.vhdl.old
 < 
 < 	    	when "010110" => -- 22
 < 		    -- custom instructions
-...
+```
 We modified decode1.vhdl which decodes the primary opcodes
-...
+```
 root@localhost:~/microwatt# diff decode1.vhdl decode1.vhdl.old
 250,256c250
 < -- begin add custom instructions
@@ -182,9 +182,9 @@ root@localhost:~/microwatt# diff decode1.vhdl decode1.vhdl.old
 < 	INSN_mcrf        =>  (ALU,  NONE, OP_CROP,      NONE,       NONE,        NONE, NONE, '1', '1', '0', '0', ZERO, '0', NONE, '0', '0', '0', '0', '0', '0', NONE, '0', '0', NONE),
 ---
 >         INSN_mcrf        =>  (ALU,  NONE, OP_CROP,      NONE,       NONE,        NONE, NONE, '1', '1', '0', '0', ZERO, '0', NONE, '0', '0', '0', '0', '0', '0', NONE, '0', '0', NONE),
-...
+```
 as well as decode2.vhdl ... fortunately one of the values for the three-bit output mux that selects between the execution units was not yet used
-...
+```
 root@localhost:~/microwatt# diff decode2.vhdl decode2.vhdl.old
 226,229c226
 < -- begin added OP_CUSTOM
@@ -193,9 +193,9 @@ root@localhost:~/microwatt# diff decode2.vhdl decode2.vhdl.old
 < 	OP_ADDG6S   => "111",           -- misc_result
 ---
 >         OP_ADDG6S   => "111",           -- misc_result
-...
+```
 Finally we modified execute1.vhdl to add the custom execution unit
-...
+```
 root@localhost:~/microwatt# diff execute1.vhdl execute1.vhdl.old
 197,199d196
 <     -- begin added for custom unit
@@ -219,13 +219,13 @@ root@localhost:~/microwatt# diff execute1.vhdl execute1.vhdl.old
 < 	custom_result      when "110",
 624d607
 <     -- end modified for custom unit
-...
+```
 
 That's it! Our first sanity check ( used step by step as we were modifying the code ) was to run micropython. Of course micropython doesn't use any of the new instructions, but by testing frequently we would be able to narrow down what change would be the culprit.
 
 Our final step is to check that the new instructions work. We created the following custom.c file in a directory named custom in the microwatt/tests directory, and also copied head.S and powerpc.lds and into this directory from one of the other tests directories
 
-...
+```
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -460,15 +460,15 @@ int main(void)
 	
 	return fail;
 }
-...
+```
 
 We create a Makefile:
 
-...
+```
 TEST=custom
 
 include ../Makefile.test
-...
+```
 
 
 
