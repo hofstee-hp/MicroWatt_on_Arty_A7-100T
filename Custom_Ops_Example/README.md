@@ -469,7 +469,112 @@ TEST=custom
 
 include ../Makefile.test
 ```
+If in the custom directory we type
+```
+make
+```
+followed by
+```
+powerpc64le-linux-gnu-objdump -d custom.o
+```
+and we look in the output we find:
+```
+...
+ 2a0:	72 4a 1e 59 	rlmi    r30,r8,r9,9,25
+ 2a4:	38 58 c7 7c 	and     r7,r6,r11
+ 2a8:	38 18 05 7d 	and     r5,r8,r3
+ 2ac:	38 20 ca 7c 	and     r10,r6,r4
+ 2b0:	38 e8 08 7d 	and     r8,r8,r29
+ 2b4:	73 4a e7 58 	rlmi.   r7,r7,r9,9,25
+ 2b8:	73 4a a5 58 	rlmi.   r5,r5,r9,9,25
+ 2bc:	73 4a 4a 59 	rlmi.   r10,r10,r9,9,25
+ 2c0:	73 4a 08 59 	rlmi.   r8,r8,r9,9,25
+ 2c4:	f4 00 e7 7c 	popcntb r7,r7
+ 2c8:	f4 00 a5 7c 	popcntb r5,r5
+ 2cc:	f4 00 4a 7d 	popcntb r10,r10
+ 2d0:	f4 00 08 7d 	popcntb r8,r8
+ 2d4:	70 2a e7 58 	rlmi    r7,r7,r5,9,24
+ 2d8:	70 42 4a 59 	rlmi    r10,r10,r8,9,24
+ 2dc:	71 3a 4a 59 	rlmi.   r10,r10,r7,9,24
+ 2e0:	70 52 5e 59 	rlmi    r30,r10,r10,9,24
+ 2e4:	71 52 5f 59 	rlmi.   r31,r10,r10,9,24
+ 2e8:	ff ff 00 34 	addic.  r0,r0,-1
+ 2ec:	78 53 5e 7d 	mr      r30,r10
+ 2f0:	b0 ff 82 40 	bne     2a0 <test_1+0x2a0>
+...
+```
+and while the disassembler does not have support for the new instructions we defined, we see that indeed each of the lines with custom assembly that we added resulted in one opcode. Also, keep in mind that the bytes on the left are reversed from what you see in the instruction definitions in the power architecture manual. Thus the last byte is the first, and the first 6 bits of "0x58" or "0x59" are 0101 10.. indeed corresponding to primary opcode 22.
 
+We take out the "//" on the lines following our kernel and we rebuild and run the test
+```
+root@localhost:~/microwatt/tests/custom# make
+powerpc64le-linux-gnu-gcc -Os -g -Wall -std=c99 -nostdinc -msoft-float -mno-string -mno-multiple -mno-vsx -mno-altivec -mlittle-endian -fno-stack-protector -mstrict-align -ffreestanding -fdata-sections -ffunction-sections -I ../../include -isystem /usr/lib/gcc-cross/powerpc64le-linux-gnu/13/include   -c -o custom.o custom.c
+powerpc64le-linux-gnu-ld -T powerpc.lds -o custom.elf custom.o head.o console.o
+powerpc64le-linux-gnu-ld: warning: custom.elf has a LOAD segment with RWX permissions
+powerpc64le-linux-gnu-objcopy -O binary custom.elf custom.bin
+../../scripts/bin2hex.py custom.bin > custom.hex
+root@localhost:~/microwatt/tests/custom# cd ..
+root@localhost:~/microwatt/tests# !cp
+cp custom/custom.bin test_custom.bin
+root@localhost:~/microwatt/tests# cd ..
+root@localhost:~/microwatt# make check_light
+```
+
+Running the test takes several minutes ( likely due to all the instructions needed for the emulated I/O ), but eventually we see:
+```
+test 01:PASS
+test_branch_alias PASS
+test 01:test no.00
+a: 0x0000000000000000  b: 0x0000000000000000  c: 0x0000000000000000  addbusat:0000000000000000 subbusat:0000000000000000 maskbu:0000000000000000 gbbd:0000000000000000
+ test no.01
+a: 0x00020304050607ff  b: 0xfafafafafafafafa  c: 0x0000000000000000  addbusat:fafcfdfeffffffff subbusat:faf8f7f6f5f4f300 maskbu:00ffffffffffffff gbbd:01010101011f672b
+ Spiking Neural Net
+initial neuron state   : 0x0000000000000000
+neuron by cycle leakage: 0x0101010101010101
+External activations   : 0x00ffffff00ffff00
+ext. add. conn.  matrix: 0x1040080a00090000
+int. add. conn.  matrix: 0x0000082014400204
+ext. inh. conn.  matrix: 0x0000200000001004
+int. inh. conn.  matrix: 0x0000000000080000
+Iteration		      00
+neuron state   :         0x0000000002000000
+External activations   : 0x00ffffff00ffff00
+Internal activations   : 0x0000000000000000
+popcntb(gbbd(ei & ea))   0x0001000003000101
+popcntb(gbbd(ii & ia))   0x0000000000000000
+popcntb(gbbd(ei & es))   0x0000010100000000
+popcntb(gbbd(ii & ia))   0x0000000000000000
+state delta              0x0001000003000101
+leakage delta            0x0101010101010101
+new state                0x0000000002000000
+Iteration		      01
+neuron state   :         0x0000000004000000
+External activations   : 0x00ffffff00ffff00
+Internal activations   : 0x00000000ff000000
+popcntb(gbbd(ei & ea))   0x0001000003000101
+popcntb(gbbd(ii & ia))   0x0000000100010000
+popcntb(gbbd(ei & es))   0x0000010100000000
+popcntb(gbbd(ii & ia))   0x0000000000000000
+state delta              0x0001000003010101
+leakage delta            0x0101010101010101
+new state                0x0000000004000000
+Iteration		      02
+neuron state   :         0x0000000006000000
+External activations   : 0x00ffffff00ffff00
+Internal activations   : 0x00000000ff000000
+popcntb(gbbd(ei & ea))   0x0001000003000101
+popcntb(gbbd(ii & ia))   0x0000000100010000
+popcntb(gbbd(ei & es))   0x0000010100000000
+popcntb(gbbd(ii & ia))   0x0000000000000000
+state delta              0x0001000003010101
+leakage delta            0x0101010101010101
+new state                0x0000000006000000
+PASS
+Files test.out and exp.out differ
+test_custom FAIL ******** Console output changed
+make: *** [Makefile:317: test_custom] Error 1
+```
+which is what we were expecting! 
 
 
 
