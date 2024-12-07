@@ -234,12 +234,6 @@ Our final step is to check that the new instructions work. We created the follow
 
 #define asm	__asm__ volatile
 
-extern void do_rfid(unsigned long msr);
-extern void do_blr(void);
-
-#define SRR0	26
-#define SRR1	27
-
 void print_string(const char *str)
 {
 	for (; *str; ++str)
@@ -263,30 +257,12 @@ void print_hex(const char *str0, unsigned long val, int ndigits, const char *str
 	print_string(str1);
 }
 
-// i < 100
-void print_test_number(int i)
-{
-	print_string("test ");
-	putchar(48 + i/10);
-	putchar(48 + i%10);
-	putchar(':');
-}
-
-struct madd_tests {
-	long op22_regs[3];
-	long op22_result;
-} madd_tests[] = {
-        { { 0x0000000000000000, 0x0000000000000000, 0x0000000000000000},              0x0000000000000000 },
-	{ { 0x00020304050607ff, 0xfafafafafafafafa, 0x0000000000000000},              0x0000000000000000 },
-};
-
 int test_1(void)
 {
+
 	long i;
-	long results_addbusat;
-	long results_subbusat;
-	long results_maskbu;
-	long results_gbbd;
+	
+	// Assembly macros and functions to facilitate using the new instructions in inline assembly
 
 	asm (".macro custom_addbusat rt:req,ra:req,rb:req,rc:req\n" \
                 ".long 22<<26 | ((\\rt&0x1f) << 21) | ((\\ra&0x1f) << 16) | ((\\rb&0x1f) << 11) |((\\rc&0x1f) << 6) | 48\n" \
@@ -360,22 +336,38 @@ int test_1(void)
           return rt;
         }
 
-        for (i = 0; i < sizeof(madd_tests) / sizeof(madd_tests[0]); ++i) {
-                results_addbusat = addbusat(madd_tests[i].op22_regs);
-		results_subbusat = subbusat(madd_tests[i].op22_regs);
-		results_maskbu   = maskbu(madd_tests[i].op22_regs);
-		results_gbbd     = gbbd(madd_tests[i].op22_regs);
-//                if (results != madd_tests[i].op22_result) { 
-                        print_hex("test no.", i, 2, "\r\n");
-			print_hex("a: 0x",madd_tests[i].op22_regs[0], 16, "  ");
-			print_hex("b: 0x",madd_tests[i].op22_regs[1], 16, "  ");
-			print_hex("c: 0x",madd_tests[i].op22_regs[2], 16, "  ");
-                        print_hex("addbusat:",results_addbusat, 16, " ");
-			print_hex("subbusat:",results_subbusat, 16, " ");
-			print_hex("maskbu:",results_maskbu, 16, " ");
-			print_hex("gbbd:",results_gbbd, 16, "\r\n ");
+	// Simple tests of new instructions
+	
+	struct custom_tests {
+        	long op22_regs[3];
+	} custom_tests[] = {
+        	{ { 0x8080808080808080, 0x8080808080808080, 0x0000000000000000} },
+		{ { 0x00020304050607ff, 0xfafafafafafafafa, 0x0000000000000000} },
+	};
+
+	long results_addbusat;
+        long results_subbusat;
+        long results_maskbu;
+        long results_gbbd;
+
+	print_string("\r\n");
+	for (i = 0; i < sizeof(custom_tests) / sizeof(custom_tests[0]); ++i) {
+		results_addbusat = addbusat(custom_tests[i].op22_regs);
+		results_subbusat = subbusat(custom_tests[i].op22_regs);
+		results_maskbu   = maskbu(custom_tests[i].op22_regs);
+		results_gbbd     = gbbd(custom_tests[i].op22_regs); 
+                print_hex("test no.", i, 2, "\r\n");
+		print_hex("a: 0x",custom_tests[i].op22_regs[0], 16, "  ");
+		print_hex("b: 0x",custom_tests[i].op22_regs[1], 16, "  ");
+		print_hex("c: 0x",custom_tests[i].op22_regs[2], 16, "  ");
+                print_hex("addbusat:",results_addbusat, 16, " ");
+		print_hex("subbusat:",results_subbusat, 16, " ");
+		print_hex("maskbu:",results_maskbu, 16, " ");
+		print_hex("gbbd:",results_gbbd, 16, "\r\n ");
         }
         
+	// Spiking neural net example
+	
         long ns = 0x0000000000000000;   // neuron state internal side initial state
         long nl = 0x0101010101010101;   // neuron by cycle leakage
         long ei = 0x00ffffff00ffff00;	// external inputs ( one byte per activation )
@@ -385,7 +377,7 @@ int test_1(void)
         long es = 0x0000200000001004;   // inhibiting synaptic connections matrix external inputs
         long is = 0x0000000000080000;   // inhibiting synaptic connections matrix internal inputs
 	long dum0=0, dum1=0, tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8, tmp9, tmp10, tmp11, tmp12, tmp13, tmp14, tmp15;
-
+	
 	print_hex("Spiking Neural Net",0, 0, "\r\n");
 	print_hex("initial neuron state   : 0x", ns, 16, "\r\n");
 	print_hex("neuron by cycle leakage: 0x", nl, 16, "\r\n");
@@ -420,45 +412,29 @@ int test_1(void)
         	asm ("custom_addbusat %0,%1,%2,%3\n\t" : "=r" (tmp15) : "r" (ns), "r" (tmp14), "r" (dum1));
         	asm ("custom_subbusat %0,%1,%2,%3\n\t" : "=r" (ns) : "r" (nl), "r" (tmp15), "r" (dum1));
 
-		// print_hex("Iteration		      ", i, 2, "\r\n");
-        	// print_hex("neuron state   :         0x", ns, 16, "\r\n");
-		// print_hex("External activations   : 0x", ei, 16, "\r\n");
-		// print_hex("Internal activations   : 0x", ii, 16, "\r\n");
-		// print_hex("popcntb(gbbd(ei & ea))   0x", tmp8, 16, "\r\n");
-        	// print_hex("popcntb(gbbd(ii & ia))   0x", tmp9, 16, "\r\n");
-        	// print_hex("popcntb(gbbd(ei & es))   0x", tmp10, 16, "\r\n");
-        	// print_hex("popcntb(gbbd(ii & ia))   0x", tmp11, 16, "\r\n");
-		// print_hex("state delta              0x", tmp14, 16, "\r\n");
-		// print_hex("leakage delta            0x", nl, 16, "\r\n");
-		// print_hex("new state                0x", ns, 16, "\r\n");
+		print_hex("Iteration              : ", i, 2, "\r\n");
+        	print_hex("neuron state           : 0x", ns, 16, "\r\n");
+		print_hex("External activations   : 0x", ei, 16, "\r\n");
+		print_hex("Internal activations   : 0x", ii, 16, "\r\n");
+		print_hex("popcntb(gbbd(ei & ea)) : 0x", tmp8, 16, "\r\n");
+        	print_hex("popcntb(gbbd(ii & ia)) : 0x", tmp9, 16, "\r\n");
+        	print_hex("popcntb(gbbd(ei & es)) : 0x", tmp10, 16, "\r\n");
+        	print_hex("popcntb(gbbd(ii & ia)) : 0x", tmp11, 16, "\r\n");
+		print_hex("state delta            : 0x", tmp14, 16, "\r\n");
+		print_hex("leakage delta          : 0x", nl, 16, "\r\n");
+		print_hex("new state              : 0x", ns, 16, "\r\n");
 	}
 
 	return 0;
-}
-
-int fail = 0;
-
-void do_test(int num, int (*test)(void))
-{
-	int ret;
-
-	print_test_number(num);
-	ret = test();
-	if (ret == 0) {
-		print_string("PASS\r\n");
-	} else {
-		fail = 1;
-		print_string("FAIL ");
-	}
 }
 
 int main(void)
 {
 	console_init();
 
-	do_test(1, test_1);
-	
-	return fail;
+	test_1();
+
+	return 0;
 }
 ```
 
@@ -513,19 +489,15 @@ powerpc64le-linux-gnu-ld -T powerpc.lds -o custom.elf custom.o head.o console.o
 powerpc64le-linux-gnu-ld: warning: custom.elf has a LOAD segment with RWX permissions
 powerpc64le-linux-gnu-objcopy -O binary custom.elf custom.bin
 ../../scripts/bin2hex.py custom.bin > custom.hex
-root@localhost:~/microwatt/tests/custom# cd ..
-root@localhost:~/microwatt/tests# !cp
-cp custom/custom.bin test_custom.bin
-root@localhost:~/microwatt/tests# cd ..
-root@localhost:~/microwatt# make check_light
+root@localhost:~/microwatt/tests/custom# cp custom.bin main_ram.bin
+root@localhost:~/microwatt/tests# ~/microwatt/core_tb > /dev/null
 ```
 
-Running the test takes several minutes ( likely due to all the instructions needed for the emulated I/O ), but eventually we see:
+The above command sends the debug output to /dev/null
+Running the test takes several minutes ( likely due to all the instructions needed for the emulated I/O ).
 ```
-test 01:PASS
-test_branch_alias PASS
-test 01:test no.00
-a: 0x0000000000000000  b: 0x0000000000000000  c: 0x0000000000000000  addbusat:0000000000000000 subbusat:0000000000000000 maskbu:0000000000000000 gbbd:0000000000000000
+test no.00
+a: 0x8080808080808080  b: 0x8080808080808080  c: 0x0000000000000000  addbusat:ffffffffffffffff subbusat:0000000000000000 maskbu:ffffffffffffffff gbbd:ff00000000000000
  test no.01
 a: 0x00020304050607ff  b: 0xfafafafafafafafa  c: 0x0000000000000000  addbusat:fafcfdfeffffffff subbusat:faf8f7f6f5f4f300 maskbu:00ffffffffffffff gbbd:01010101011f672b
  Spiking Neural Net
@@ -536,43 +508,39 @@ ext. add. conn.  matrix: 0x1040080a00090000
 int. add. conn.  matrix: 0x0000082014400204
 ext. inh. conn.  matrix: 0x0000200000001004
 int. inh. conn.  matrix: 0x0000000000080000
-Iteration		      00
-neuron state   :         0x0000000002000000
+Iteration              : 00
+neuron state           : 0x0000000002000000
 External activations   : 0x00ffffff00ffff00
 Internal activations   : 0x0000000000000000
-popcntb(gbbd(ei & ea))   0x0001000003000101
-popcntb(gbbd(ii & ia))   0x0000000000000000
-popcntb(gbbd(ei & es))   0x0000010100000000
-popcntb(gbbd(ii & ia))   0x0000000000000000
-state delta              0x0001000003000101
-leakage delta            0x0101010101010101
-new state                0x0000000002000000
-Iteration		      01
-neuron state   :         0x0000000004000000
+popcntb(gbbd(ei & ea)) : 0x0001000003000101
+popcntb(gbbd(ii & ia)) : 0x0000000000000000
+popcntb(gbbd(ei & es)) : 0x0000010100000000
+popcntb(gbbd(ii & ia)) : 0x0000000000000000
+state delta            : 0x0001000003000101
+leakage delta          : 0x0101010101010101
+new state              : 0x0000000002000000
+Iteration              : 01
+neuron state           : 0x0000000004000000
 External activations   : 0x00ffffff00ffff00
 Internal activations   : 0x00000000ff000000
-popcntb(gbbd(ei & ea))   0x0001000003000101
-popcntb(gbbd(ii & ia))   0x0000000100010000
-popcntb(gbbd(ei & es))   0x0000010100000000
-popcntb(gbbd(ii & ia))   0x0000000000000000
-state delta              0x0001000003010101
-leakage delta            0x0101010101010101
-new state                0x0000000004000000
-Iteration		      02
-neuron state   :         0x0000000006000000
+popcntb(gbbd(ei & ea)) : 0x0001000003000101
+popcntb(gbbd(ii & ia)) : 0x0000000100010000
+popcntb(gbbd(ei & es)) : 0x0000010100000000
+popcntb(gbbd(ii & ia)) : 0x0000000000000000
+state delta            : 0x0001000003010101
+leakage delta          : 0x0101010101010101
+new state              : 0x0000000004000000
+Iteration              : 02
+neuron state           : 0x0000000006000000
 External activations   : 0x00ffffff00ffff00
 Internal activations   : 0x00000000ff000000
-popcntb(gbbd(ei & ea))   0x0001000003000101
-popcntb(gbbd(ii & ia))   0x0000000100010000
-popcntb(gbbd(ei & es))   0x0000010100000000
-popcntb(gbbd(ii & ia))   0x0000000000000000
-state delta              0x0001000003010101
-leakage delta            0x0101010101010101
-new state                0x0000000006000000
-PASS
-Files test.out and exp.out differ
-test_custom FAIL ******** Console output changed
-make: *** [Makefile:317: test_custom] Error 1
+popcntb(gbbd(ei & ea)) : 0x0001000003000101
+popcntb(gbbd(ii & ia)) : 0x0000000100010000
+popcntb(gbbd(ei & es)) : 0x0000010100000000
+popcntb(gbbd(ii & ia)) : 0x0000000000000000
+state delta            : 0x0001000003010101
+leakage delta          : 0x0101010101010101
+new state              : 0x0000000006000000
 ```
 which is what we were expecting! 
 
