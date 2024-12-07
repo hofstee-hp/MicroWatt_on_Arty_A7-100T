@@ -456,27 +456,38 @@ powerpc64le-linux-gnu-objdump -d custom.o
 and we look in the output we find:
 ```
 ...
- 2a0:	72 4a 1e 59 	rlmi    r30,r8,r9,9,25
- 2a4:	38 58 c7 7c 	and     r7,r6,r11
- 2a8:	38 18 05 7d 	and     r5,r8,r3
- 2ac:	38 20 ca 7c 	and     r10,r6,r4
- 2b0:	38 e8 08 7d 	and     r8,r8,r29
- 2b4:	73 4a e7 58 	rlmi.   r7,r7,r9,9,25
- 2b8:	73 4a a5 58 	rlmi.   r5,r5,r9,9,25
- 2bc:	73 4a 4a 59 	rlmi.   r10,r10,r9,9,25
- 2c0:	73 4a 08 59 	rlmi.   r8,r8,r9,9,25
- 2c4:	f4 00 e7 7c 	popcntb r7,r7
- 2c8:	f4 00 a5 7c 	popcntb r5,r5
- 2cc:	f4 00 4a 7d 	popcntb r10,r10
- 2d0:	f4 00 08 7d 	popcntb r8,r8
- 2d4:	70 2a e7 58 	rlmi    r7,r7,r5,9,24
- 2d8:	70 42 4a 59 	rlmi    r10,r10,r8,9,24
- 2dc:	71 3a 4a 59 	rlmi.   r10,r10,r7,9,24
- 2e0:	70 52 5e 59 	rlmi    r30,r10,r10,9,24
- 2e4:	71 52 5f 59 	rlmi.   r31,r10,r10,9,24
- 2e8:	ff ff 00 34 	addic.  r0,r0,-1
- 2ec:	78 53 5e 7d 	mr      r30,r10
- 2f0:	b0 ff 82 40 	bne     2a0 <test_1+0x2a0>
+ 340:	00 00 20 39 	li      r9,0
+ 344:	72 4a 7d 5a 	rlmi    r29,r19,r9,9,25
+ 348:	38 d0 ca 7f 	and     r10,r30,r26
+ 34c:	38 d8 6e 7e 	and     r14,r19,r27
+ 350:	38 90 d9 7f 	and     r25,r30,r18
+ 354:	08 00 80 3f 	lis     r28,8
+ 358:	38 e0 7c 7e 	and     r28,r19,r28
+ 35c:	73 4a 4a 59 	rlmi.   r10,r10,r9,9,25
+ 360:	73 4a ce 59 	rlmi.   r14,r14,r9,9,25
+ 364:	73 4a 39 5b 	rlmi.   r25,r25,r9,9,25
+ 368:	73 4a 9c 5b 	rlmi.   r28,r28,r9,9,25
+ 36c:	f4 00 54 7d 	popcntb r20,r10
+ 370:	f4 00 ce 7d 	popcntb r14,r14
+ 374:	f4 00 39 7f 	popcntb r25,r25
+ 378:	f4 00 9c 7f 	popcntb r28,r28
+ 37c:	70 72 14 59 	rlmi    r20,r8,r14,9,24
+ 380:	70 e2 19 58 	rlmi    r25,r0,r28,9,24
+ 384:	71 42 a0 5a 	rlmi.   r0,r21,r8,9,24
+ 388:	70 aa bd 5b 	rlmi    r29,r29,r21,9,24
+ 38c:	01 01 00 3d 	lis     r8,257
+ 390:	01 01 08 61 	ori     r8,r8,257
+ 394:	0e 00 08 79 	rldimi  r8,r8,32,0
+ 398:	71 ea a8 5b 	rlmi.   r8,r29,r29,9,24
+ 39c:	02 00 a0 38 	li      r5,2
+ 3a0:	78 b3 c4 7e 	mr      r4,r22
+ 3a4:	78 fb e6 7f 	mr      r6,r31
+ 3a8:	78 7b e3 7d 	mr      r3,r15
+ 3ac:	78 00 01 f9 	std     r8,120(r1)
+ 3b0:	01 00 d6 3a 	addi    r22,r22,1
+... ( bunch of code for the print statements )
+ 494:	03 00 36 2c 	cmpdi   r22,3
+ 498:	a8 fe 82 40 	bne     340 <test_1+0x340>
 ...
 ```
 and while the disassembler does not have support for the new instructions we defined, we see that indeed each of the lines with custom assembly that we added resulted in one opcode. Also, keep in mind that the bytes on the left are reversed from what you see in the instruction definitions in the power architecture manual. Thus the last byte is the first, and the first 6 bits of "0x58" or "0x59" are 0101 10.. indeed corresponding to primary opcode 22.
