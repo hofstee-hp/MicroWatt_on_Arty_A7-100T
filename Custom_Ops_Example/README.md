@@ -101,115 +101,117 @@ end behaviour;
 We modify the Makefile to include this unit in the build process:
 
 ```
-root@localhost:~/microwatt# diff Makefile Makefile.old
-70d69
-< # begin modified for custom unit: added custom_unit.vhdl
-75c74
-< 	cr_file.vhdl crhelpers.vhdl ppc_fx_insns.vhdl rotator.vhdl custom_unit.vhdl\
+root@localhost:~/microwatt# diff Makefile.old Makefile
+69a70
+> # begin modified for custom unit: added custom_unit.vhdl
+74c75
+< 	cr_file.vhdl crhelpers.vhdl ppc_fx_insns.vhdl rotator.vhdl \
 ---
-> 	cr_file.vhdl crhelpers.vhdl ppc_fx_insns.vhdl rotator.vhdl \
-79d77
-< # end modified for custom unit
->
+> 	cr_file.vhdl crhelpers.vhdl ppc_fx_insns.vhdl rotator.vhdl custom_unit.vhdl\
+77a79
+> # end modified for custom unit
 ```
+
 decode_types.vhdl is updated to add the new instructions and opcode group
 
 ```
-root@localhost:~/microwatt# diff decode_types.vhdl decode_types.vhdl.old
-5,6c5
-< -- begin modified for custom instructions: added OP_CUSTOM
-<     	type insn_type_t is (OP_ILLEGAL, OP_NOP, OP_ADD,
----
->     type insn_type_t is (OP_ILLEGAL, OP_NOP, OP_ADD,
-10c9
-< 			 OP_CNTZ, OP_CROP, OP_CUSTOM,
----
-> 			 OP_CNTZ, OP_CROP,
-30d28
-< -- end modified for custom instructions
-286,293d283
-< 	-- begin added custom instructions here
-< 	-- NOTE: for ease of modification of this code custom instructions are defined as having three 64b integer operands and one 64b integer result
-<         INSN_custom_addbusat,
-< 	INSN_custom_subbusat,
-< 	INSN_custom_maskbu,
-< 	INSN_custom_gbbd,
-< 	-- add added custom instructions here (and removed some padding)
-< 
-295c285,286
-<         INSN_239,
----
->         INSN_235,
->         INSN_236, INSN_237, INSN_238, INSN_239,
-791,796d781
-< -- begin added custom opcodes
-< 	    when INSN_custom_addbusat => return "010110";
-< 	    when INSN_custom_subbusat => return "010110";
-< 	    when INSN_custom_maskbu   => return "010110";
-< 	    when INSN_custom_gbbd     => return "010110";
-< -- end added custom opcodes
+root@localhost:~/microwatt# diff decode_types.vhdl.old decode_types.vhdl
 ```
-
+5c5,6
+<     type insn_type_t is (OP_ILLEGAL, OP_NOP, OP_ADD,
+---
+> -- begin modified for custom instructions: added OP_CUSTOM
+>     	type insn_type_t is (OP_ILLEGAL, OP_NOP, OP_ADD,
+9c10
+< 			 OP_CNTZ, OP_CROP,
+---
+> 			 OP_CNTZ, OP_CROP, OP_CUSTOM,
+28a30
+> -- end modified for custom instructions
+283a286,293
+> 	-- begin added custom instructions here
+> 	-- NOTE: for ease of modification of this code custom instructions are defined as having three 64b integer operands and one 64b integer result
+>         INSN_custom_addbusat,
+> 	INSN_custom_subbusat,
+> 	INSN_custom_maskbu,
+> 	INSN_custom_gbbd,
+> 	-- add added custom instructions here (and removed some padding)
+> 
+285,286c295
+<         INSN_235,
+<         INSN_236, INSN_237, INSN_238, INSN_239,
+---
+>         INSN_239,
+781a791,796
+> -- begin added custom opcodes
+> 	    when INSN_custom_addbusat => return "010110";
+> 	    when INSN_custom_subbusat => return "010110";
+> 	    when INSN_custom_maskbu   => return "010110";
+> 	    when INSN_custom_gbbd     => return "010110";
+> -- end added custom opcodes
+```
 predecode.vhdl adds support for the new instructions as well
+
 ```
-root@localhost:~/microwatt# diff predecode.vhdl predecode.vhdl.old
-113,119d112
-< -- begin added custom opcodes
-< 	-- major opcode 22
-< 	2#010110_10000#			   =>  INSN_custom_addbusat,
-< 	2#010110_10001#			   =>  INSN_custom_subbusat,
-< 	2#010110_10010#			   =>  INSN_custom_maskbu,
-< 	2#010110_10011#			   =>  INSN_custom_gbbd,
-< -- end added custom opcodes
-589,591d581
-< 
-< 	    	when "010110" => -- 22
-< 		    -- custom instructions
+root@localhost:~/microwatt# diff predecode.vhdl.old predecode.vhdl
+112a113,119
+> -- begin added custom opcodes
+> 	-- major opcode 22
+> 	2#010110_10000#			   =>  INSN_custom_addbusat,
+> 	2#010110_10001#			   =>  INSN_custom_subbusat,
+> 	2#010110_10010#			   =>  INSN_custom_maskbu,
+> 	2#010110_10011#			   =>  INSN_custom_gbbd,
+> -- end added custom opcodes
+581a589,591
+> 
+> 	    	when "010110" => -- 22
+> 		    -- custom instructions
 ```
 We modified decode1.vhdl which decodes the primary opcodes
 ```
-root@localhost:~/microwatt# diff decode1.vhdl decode1.vhdl.old
-250,255d249
-< -- begin add custom instructions
-< 	INSN_custom_addbusat => ( ALU, NONE, OP_CUSTOM, RA,         RB,          RCR,  RT,   '0', '0', '0', '0', ZERO, '0', NONE, '0', '0', '0', '0', '0', '0', NONE, '0', '0', NONE),
-< 	INSN_custom_subbusat => ( ALU, NONE, OP_CUSTOM, RA,	    RB,		 RCR,  RT,   '0', '0', '0', '0', ZERO, '0', NONE, '0', '0', '0', '0', '0', '0', NONE, '0', '0', NONE),
-< 	INSN_custom_maskbu   => ( ALU, NONE, OP_CUSTOM, RA,         RB,          RCR,  RT,   '0', '0', '0', '0', ZERO, '0', NONE, '0', '0', '0', '0', '0', '0', NONE, '0', '0', NONE),
-< 	INSN_custom_gbbd     => ( ALU, NONE, OP_CUSTOM, RA,	    RB,          RCR,  RT,   '0', '0', '0', '0', ZERO, '0', NONE, '0', '0', '0', '0', '0', '0', NONE, '0', '0', NONE),
-< -- end add custom instructions
+root@localhost:~/microwatt# diff decode1.vhdl.old decode1.vhdl
+249a250,255
+> -- begin add custom instructions
+> 	INSN_custom_addbusat => ( ALU, NONE, OP_CUSTOM, RA,         RB,          RCR,  RT,   '0', '0', '0', '0', ZERO, '0', NONE, '0', '0', '0', '0', '0', '0', NONE, '0', '0', NONE),
+> 	INSN_custom_subbusat => ( ALU, NONE, OP_CUSTOM, RA,	    RB,		 RCR,  RT,   '0', '0', '0', '0', ZERO, '0', NONE, '0', '0', '0', '0', '0', '0', NONE, '0', '0', NONE),
+> 	INSN_custom_maskbu   => ( ALU, NONE, OP_CUSTOM, RA,         RB,          RCR,  RT,   '0', '0', '0', '0', ZERO, '0', NONE, '0', '0', '0', '0', '0', '0', NONE, '0', '0', NONE),
+> 	INSN_custom_gbbd     => ( ALU, NONE, OP_CUSTOM, RA,	    RB,          RCR,  RT,   '0', '0', '0', '0', ZERO, '0', NONE, '0', '0', '0', '0', '0', '0', NONE, '0', '0', NONE),
+> -- end add custom instructions
 ```
 as well as decode2.vhdl ... fortunately one of the values for the three-bit output mux that selects between the execution units was not yet used
+
 ```
-root@localhost:~/microwatt# diff decode2.vhdl decode2.vhdl.old
-226,228d225
-< -- begin added OP_CUSTOM
-<         OP_CUSTOM   => "110",		-- custom_result
-< -- end added OP_CUSTOM
+root@localhost:~/microwatt# diff decode2.vhdl.old decode2.vhdl
+225a226,228
+> -- begin added OP_CUSTOM
+>         OP_CUSTOM   => "110",		-- custom_result
+> -- end added OP_CUSTOM
 ```
 Finally we modified execute1.vhdl to add the custom execution unit
 ```
-root@localhost:~/microwatt# diff execute1.vhdl execute1.vhdl.old
-197,199d196
-<     -- begin added for custom unit
-<     signal custom_result: std_ulogic_vector(63 downto 0);
-<     -- end added for custom unit
-408,418d404
-<     -- begin added for custom unit
-<     custom_0: entity work.custom_unit
-< 	port map (
-<     	    ra => a_in,
-<     	    rb => b_in,
-< 	    rc => c_in,
-< 	    insn => e_in.insn,
-< 	    result => custom_result
-<             );
-<     -- end added for custom unit	
-< 	
-613d598
-<     -- begin modified for custom unit
-622d606
-< 	custom_result      when "110",
-624d607
-<     -- end modified for custom unit
+root@localhost:~/microwatt# diff execute1.vhdl.old execute1.vhdl
+196a197,199
+>     -- begin added for custom unit
+>     signal custom_result: std_ulogic_vector(63 downto 0);
+>     -- end added for custom unit
+404a408,418
+>     -- begin added for custom unit
+>     custom_0: entity work.custom_unit
+> 	port map (
+>     	    ra => a_in,
+>     	    rb => b_in,
+> 	    rc => c_in,
+> 	    insn => e_in.insn,
+> 	    result => custom_result
+>             );
+>     -- end added for custom unit	
+> 	
+598a613
+>     -- begin modified for custom unit
+606a622
+> 	custom_result      when "110",
+607a624
+>     -- end modified for custom unit
 ```
 
 That's it! Our first sanity check ( used step by step as we were modifying the code ) was to run micropython. Of course micropython doesn't use any of the new instructions, but by testing frequently we would be able to narrow down what change would be the culprit.
