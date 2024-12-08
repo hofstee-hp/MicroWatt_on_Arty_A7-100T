@@ -102,6 +102,9 @@ We modify the Makefile to include this unit in the build process:
 
 ```
 root@localhost:~/microwatt# diff Makefile.old Makefile
+```
+
+```
 69a70
 > # begin modified for custom unit: added custom_unit.vhdl
 74c75
@@ -116,6 +119,8 @@ decode_types.vhdl is updated to add the new instructions and opcode group
 
 ```
 root@localhost:~/microwatt# diff decode_types.vhdl.old decode_types.vhdl
+```
+
 ```
 5c5,6
 <     type insn_type_t is (OP_ILLEGAL, OP_NOP, OP_ADD,
@@ -154,6 +159,9 @@ predecode.vhdl adds support for the new instructions as well
 
 ```
 root@localhost:~/microwatt# diff predecode.vhdl.old predecode.vhdl
+```
+
+```
 112a113,119
 > -- begin added custom opcodes
 > 	-- major opcode 22
@@ -170,6 +178,9 @@ root@localhost:~/microwatt# diff predecode.vhdl.old predecode.vhdl
 We modified decode1.vhdl which decodes the primary opcodes
 ```
 root@localhost:~/microwatt# diff decode1.vhdl.old decode1.vhdl
+```
+
+```
 249a250,255
 > -- begin add custom instructions
 > 	INSN_custom_addbusat => ( ALU, NONE, OP_CUSTOM, RA,         RB,          RCR,  RT,   '0', '0', '0', '0', ZERO, '0', NONE, '0', '0', '0', '0', '0', '0', NONE, '0', '0', NONE),
@@ -182,14 +193,22 @@ as well as decode2.vhdl ... fortunately one of the values for the three-bit outp
 
 ```
 root@localhost:~/microwatt# diff decode2.vhdl.old decode2.vhdl
+```
+
+```
 225a226,228
 > -- begin added OP_CUSTOM
 >         OP_CUSTOM   => "110",		-- custom_result
 > -- end added OP_CUSTOM
 ```
+
 Finally we modified execute1.vhdl to add the custom execution unit
+
 ```
 root@localhost:~/microwatt# diff execute1.vhdl.old execute1.vhdl
+```
+
+```
 196a197,199
 >     -- begin added for custom unit
 >     signal custom_result: std_ulogic_vector(63 downto 0);
