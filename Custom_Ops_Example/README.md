@@ -169,16 +169,13 @@ root@localhost:~/microwatt# diff predecode.vhdl predecode.vhdl.old
 We modified decode1.vhdl which decodes the primary opcodes
 ```
 root@localhost:~/microwatt# diff decode1.vhdl decode1.vhdl.old
-250,256c250
+250,255d249
 < -- begin add custom instructions
 < 	INSN_custom_addbusat => ( ALU, NONE, OP_CUSTOM, RA,         RB,          RCR,  RT,   '0', '0', '0', '0', ZERO, '0', NONE, '0', '0', '0', '0', '0', '0', NONE, '0', '0', NONE),
 < 	INSN_custom_subbusat => ( ALU, NONE, OP_CUSTOM, RA,	    RB,		 RCR,  RT,   '0', '0', '0', '0', ZERO, '0', NONE, '0', '0', '0', '0', '0', '0', NONE, '0', '0', NONE),
 < 	INSN_custom_maskbu   => ( ALU, NONE, OP_CUSTOM, RA,         RB,          RCR,  RT,   '0', '0', '0', '0', ZERO, '0', NONE, '0', '0', '0', '0', '0', '0', NONE, '0', '0', NONE),
 < 	INSN_custom_gbbd     => ( ALU, NONE, OP_CUSTOM, RA,	    RB,          RCR,  RT,   '0', '0', '0', '0', ZERO, '0', NONE, '0', '0', '0', '0', '0', '0', NONE, '0', '0', NONE),
 < -- end add custom instructions
-< 	INSN_mcrf        =>  (ALU,  NONE, OP_CROP,      NONE,       NONE,        NONE, NONE, '1', '1', '0', '0', ZERO, '0', NONE, '0', '0', '0', '0', '0', '0', NONE, '0', '0', NONE),
----
->         INSN_mcrf        =>  (ALU,  NONE, OP_CROP,      NONE,       NONE,        NONE, NONE, '1', '1', '0', '0', ZERO, '0', NONE, '0', '0', '0', '0', '0', '0', NONE, '0', '0', NONE),
 ```
 as well as decode2.vhdl ... fortunately one of the values for the three-bit output mux that selects between the execution units was not yet used
 ```
