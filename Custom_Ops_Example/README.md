@@ -153,7 +153,7 @@ root@localhost:~/microwatt# diff decode_types.vhdl decode_types.vhdl.old
 predecode.vhdl adds support for the new instructions as well
 ```
 root@localhost:~/microwatt# diff predecode.vhdl predecode.vhdl.old
-113,120c113
+113,119d112
 < -- begin added custom opcodes
 < 	-- major opcode 22
 < 	2#010110_10000#			   =>  INSN_custom_addbusat,
@@ -161,9 +161,6 @@ root@localhost:~/microwatt# diff predecode.vhdl predecode.vhdl.old
 < 	2#010110_10010#			   =>  INSN_custom_maskbu,
 < 	2#010110_10011#			   =>  INSN_custom_gbbd,
 < -- end added custom opcodes
-< 	-- major opcode 30
----
->         -- major opcode 30
 589,591d581
 < 
 < 	    	when "010110" => -- 22
@@ -186,13 +183,10 @@ root@localhost:~/microwatt# diff decode1.vhdl decode1.vhdl.old
 as well as decode2.vhdl ... fortunately one of the values for the three-bit output mux that selects between the execution units was not yet used
 ```
 root@localhost:~/microwatt# diff decode2.vhdl decode2.vhdl.old
-226,229c226
+226,228d225
 < -- begin added OP_CUSTOM
 <         OP_CUSTOM   => "110",		-- custom_result
 < -- end added OP_CUSTOM
-< 	OP_ADDG6S   => "111",           -- misc_result
----
->         OP_ADDG6S   => "111",           -- misc_result
 ```
 Finally we modified execute1.vhdl to add the custom execution unit
 ```
@@ -492,7 +486,7 @@ and we look in the output we find:
 ```
 and while the disassembler does not have support for the new instructions we defined, we see that indeed each of the lines with custom assembly that we added resulted in one opcode. Also, keep in mind that the bytes on the left are reversed from what you see in the instruction definitions in the power architecture manual. Thus the last byte is the first, and the first 6 bits of "0x58" or "0x59" are 0101 10.. indeed corresponding to primary opcode 22.
 
-We take out the "//" on the lines following our kernel and we rebuild and run the test
+These are the commands to make and run the test.
 ```
 root@localhost:~/microwatt/tests/custom# make
 powerpc64le-linux-gnu-gcc -Os -g -Wall -std=c99 -nostdinc -msoft-float -mno-string -mno-multiple -mno-vsx -mno-altivec -mlittle-endian -fno-stack-protector -mstrict-align -ffreestanding -fdata-sections -ffunction-sections -I ../../include -isystem /usr/lib/gcc-cross/powerpc64le-linux-gnu/13/include   -c -o custom.o custom.c
