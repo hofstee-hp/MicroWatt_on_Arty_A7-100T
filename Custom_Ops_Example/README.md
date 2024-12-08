@@ -567,5 +567,17 @@ new state              : 0x0000000006000000
 ```
 which is what we were expecting! 
 
+## Building with fusesoc
+
+To build with fusesoc we need to update $microwatt.core$
+
+```
+root@localhost:~/microwatt# diff microwatt.core.old microwatt.core
+```
+
+```
+30a31
+>       - custom_unit.vhdl
+```
 
 
