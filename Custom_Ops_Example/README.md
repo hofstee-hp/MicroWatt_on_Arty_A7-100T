@@ -502,7 +502,7 @@ and we look in the output we find:
  498:	a8 fe 82 40 	bne     340 <test_1+0x340>
 ...
 ```
-and while the disassembler does not have support for the new instructions we defined, we see that indeed each of the lines with custom assembly that we added resulted in one opcode. Also, keep in mind that the bytes on the left are reversed from what you see in the instruction definitions in the power architecture manual. Thus the last byte is the first, and the first 6 bits of "0x58" or "0x59" are 0101 10.. indeed corresponding to primary opcode 22.
+and while the disassembler does not have support for the new instructions we defined, we see that indeed each of the lines with custom assembly that we added resulted in one opcode. Also, keep in mind that the bytes on the left are reversed from what you see in the instruction definitions in the power architecture manual. Thus the last byte is the first, and the first 6 bits of "0x58","0x59","0x5a", or "0x5b" are 0101 10.. indeed corresponding to primary opcode 22.
 
 These are the commands to make and run the test.
 ```
