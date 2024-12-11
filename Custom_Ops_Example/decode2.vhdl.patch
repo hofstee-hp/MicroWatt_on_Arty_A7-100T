@@ -1,0 +1,4 @@
+225a226,228
+> -- begin added OP_CUSTOM
+>         OP_CUSTOM   => "110",		-- custom_result
+> -- end added OP_CUSTOM

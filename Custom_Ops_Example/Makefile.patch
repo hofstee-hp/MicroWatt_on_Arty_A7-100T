@@ -1,0 +1,8 @@
+69a70
+> # begin modified for custom unit: added custom_unit.vhdl
+74c75
+< 	cr_file.vhdl crhelpers.vhdl ppc_fx_insns.vhdl rotator.vhdl \
+---
+> 	cr_file.vhdl crhelpers.vhdl ppc_fx_insns.vhdl rotator.vhdl custom_unit.vhdl\
+77a79
+> # end modified for custom unit

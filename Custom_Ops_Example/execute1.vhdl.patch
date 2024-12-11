@@ -1,0 +1,22 @@
+196a197,199
+>     -- begin added for custom unit
+>     signal custom_result: std_ulogic_vector(63 downto 0);
+>     -- end added for custom unit
+404a408,418
+>     -- begin added for custom unit
+>     custom_0: entity work.custom_unit
+> 	port map (
+>     	    ra => a_in,
+>     	    rb => b_in,
+> 	    rc => c_in,
+> 	    insn => e_in.insn,
+> 	    result => custom_result
+>             );
+>     -- end added for custom unit	
+> 	
+598a613
+>     -- begin modified for custom unit
+606a622
+> 	custom_result      when "110",
+607a624
+>     -- end modified for custom unit

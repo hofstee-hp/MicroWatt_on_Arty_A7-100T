@@ -1,0 +1,32 @@
+5c5,6
+<     type insn_type_t is (OP_ILLEGAL, OP_NOP, OP_ADD,
+---
+> -- begin modified for custom instructions: added OP_CUSTOM
+>     	type insn_type_t is (OP_ILLEGAL, OP_NOP, OP_ADD,
+9c10
+< 			 OP_CNTZ, OP_CROP,
+---
+> 			 OP_CNTZ, OP_CROP, OP_CUSTOM,
+28a30
+> -- end modified for custom instructions
+283a286,293
+> 	-- begin added custom instructions here
+> 	-- NOTE: for ease of modification of this code custom instructions are defined as having three 64b integer operands and one 64b integer result
+>         INSN_custom_addbusat,
+> 	INSN_custom_subbusat,
+> 	INSN_custom_maskbu,
+> 	INSN_custom_gbbd,
+> 	-- add added custom instructions here (and removed some padding)
+> 
+285,286c295
+<         INSN_235,
+<         INSN_236, INSN_237, INSN_238, INSN_239,
+---
+>         INSN_239,
+781a791,796
+> -- begin added custom opcodes
+> 	    when INSN_custom_addbusat => return "010110";
+> 	    when INSN_custom_subbusat => return "010110";
+> 	    when INSN_custom_maskbu   => return "010110";
+> 	    when INSN_custom_gbbd     => return "010110";
+> -- end added custom opcodes

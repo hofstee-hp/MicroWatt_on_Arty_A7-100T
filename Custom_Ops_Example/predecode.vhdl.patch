@@ -1,0 +1,12 @@
+112a113,119
+> -- begin added custom opcodes
+> 	-- major opcode 22
+> 	2#010110_10000#			   =>  INSN_custom_addbusat,
+> 	2#010110_10001#			   =>  INSN_custom_subbusat,
+> 	2#010110_10010#			   =>  INSN_custom_maskbu,
+> 	2#010110_10011#			   =>  INSN_custom_gbbd,
+> -- end added custom opcodes
+581a589,591
+> 
+> 	    	when "010110" => -- 22
+> 		    -- custom instructions
