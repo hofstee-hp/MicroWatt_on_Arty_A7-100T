@@ -44,6 +44,10 @@ $ sudo apt-get upgrade
 $ sudo apt-get install -y build-essential git ghdl-common ghdl ghdl-llvm gnat
 $ sudo apt-get install -y binutils-powerpc64le* gcc-powerpc64le-* g++-powerpc64le-*
 ```
+Note: a recent distribution requires manually adding a simlink
+```
+ln -s /usr/lib/llvm-18/lib/libLLVM.so.1 /usr/lib/llvm-18/lib/libLLVM-18.so.18.1
+```
 
 ### Build MicroPython
 ```
