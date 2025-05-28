@@ -60,7 +60,7 @@ $ make
 ### Build MicroWatt
 ```
 $ cd ~ 
-$ git clone https://github.com/Joel-Dandin/microwatt
+$ git clone https://github.com/hofstee-hp/microwatt
 $ cd microwatt 
 $ make 
 ```
