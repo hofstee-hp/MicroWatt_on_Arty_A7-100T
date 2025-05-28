@@ -60,10 +60,11 @@ $ make
 ### Build MicroWatt
 ```
 $ cd ~ 
-$ git clone https://github.com/antonblanchard/microwatt 
+$ git clone https://github.com/Joel-Dandin/microwatt
 $ cd microwatt 
 $ make 
 ```
+* Note: I normally clone from the main branch at https://github.com/antonblanchard/microwatt but that version does not currently work for me
 ### Run MicroPython on MicroWatt in the GHDL simulator
 ```
 $ cd ~/microwatt 
