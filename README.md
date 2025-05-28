@@ -91,7 +91,7 @@ https://docs.amd.com/r/en-US/ug973-vivado-release-notes-install-license/Download
 
 We recommend the web installer version 291.7MB initial download since the ingle file download for Vivado 2024.1 is 107GB (sic)
 
-Install the digilent board packages:
+Install the digilent board packages: (Note: I was recently able to skip this step. I suggest you skip it too.)
 ```
 $ cd
 $ git clone https://github.com/Digilent/vivado-boards.git
